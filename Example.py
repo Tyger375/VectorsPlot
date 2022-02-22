@@ -1,0 +1,20 @@
+from VectorsPlot import *
+
+vettore = Vector2D(15, 15)
+
+print(vettore + Vector2D(2, 3), vettore - Vector2D(2, 3))
+test = Grafico()
+test.set_size((Vector2D(0, 0), vettore))
+test.set_x_interval(1)
+test.set_y_interval(1)
+test.set_title("sos")
+primovettore = Vector2D(2, 4)
+secondovettore = Vector2D(3, 1)
+#test.punta_coda([primovettore, secondovettore])
+test.parallelogramma(primovettore, secondovettore)
+#test.add_arrow(primovettore)
+#test.add_arrow(vectorfrom=primovettore, vectorto=secondovettore)
+#test.add_arrow(primovettore + secondovettore)
+#test.add_arrow(Vector2D(2, 3))
+test.set_grid(True)
+test.save("test.png")
