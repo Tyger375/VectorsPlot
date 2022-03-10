@@ -25,7 +25,7 @@ class Vector2D():
 
 
 class Grafico:
-    def __init__(self, size=None, xticks=0.1, yticks=0.1, title=None):
+    def __init__(self, size:list[Vector2D], xticks=0.1, yticks=0.1, title=None):
         fig, ax = plt.subplots()
         self.fig = fig
         self.ax = ax
@@ -37,28 +37,36 @@ class Grafico:
         if title != None:
             self.set_title(title)
 
-    def set_title(self, title):
+    def set_title(self, title:str):
         self.ax.set_title(title)
 
-    def set_x_interval(self, xticks):
-        size = self.ax.get_xlim()
-        print(size)
-        array = np.arange(round(size[0]), round(size[1]), xticks).tolist()
-        print(array)
-        self.ax.set_xticks(array)
+    def set_x_interval(self, xticks=None, array=None):
+        if xticks != None:
+            size = self.ax.get_xlim()
+            array = np.arange(round(size[0]), round(size[1]), xticks).tolist()
+            self.ax.set_xticks(array)
+        else:
+            try:
+                self.ax.set_xticks(array)
+            except:
+                pass
 
-    def set_y_interval(self, yticks):
-        size = self.ax.get_ylim()
-        print(size)
-        array = np.arange(round(size[0]), round(size[1]), yticks).tolist()
-        print(array)
-        self.ax.set_yticks(array)
+    def set_y_interval(self, yticks=None, array=None):
+        if yticks != None:
+            size = self.ax.get_ylim()
+            array = np.arange(round(size[0]), round(size[1]), yticks).tolist()
+            self.ax.set_yticks(array)
+        else:
+            try:
+                self.ax.set_yticks(array)
+            except:
+                pass
 
-    def set_size(self, size):
+    def set_size(self, size:list[Vector2D]):
         self.ax.set_xlim((size[0].x, size[1].x))
         self.ax.set_ylim((size[0].y, size[1].y))
 
-    def add_arrow(self, vectorto, vectorfrom=Vector2D(), width=1.5, head_width=0.45, head_length=0.5, colore_punta='lightblue', colore_linea='black', linestyle="solid"):
+    def add_arrow(self, vectorto:Vector2D, vectorfrom=Vector2D(), width=1.5, head_width=0.45, head_length=0.5, colore_punta='lightblue', colore_linea='black', linestyle="solid"):
         self.ax.arrow(vectorfrom.x, vectorfrom.y, vectorto.x, vectorto.y, head_length=head_length,
                       head_width=head_width, fc=colore_punta, ec=colore_linea, ls=linestyle)
 
@@ -72,14 +80,14 @@ class Grafico:
         self.fig.savefig(nomefile)
         # plt.show()
 
-    def punta_coda(self, vectors):
+    def punta_coda(self, vectors:list[Vector2D]):
         sommavettori = Vector2D()
         for vettore in vectors:
             self.add_arrow(vettore, sommavettori)
             sommavettori += vettore
         self.add_arrow(sommavettori)
 
-    def parallelogramma(self, vectors):
+    def parallelogramma(self, vectors:list[Vector2D]):
         primovettore = None
         sommavettori = Vector2D()
         for vettore in vectors:
@@ -99,7 +107,7 @@ class Grafico:
                 primovettore = vettore
                 break
 
-    def plot(self, x, y, type="lines", size=20, pointtype="o", errx=None, erry=None):
+    def plot(self, x:list, y:list, type="lines", size=20, pointtype="o", errx=None, erry=None):
         if type == "lines":
             self.ax.plot(x, y)
         elif type == "points":
@@ -107,18 +115,13 @@ class Grafico:
         elif type == "+":
             self.ax.scatter(x, y, marker="+", s=size)
         elif type == "xyerrorbars":
-            self.ax.errorbar(x, y, errx, erry, fmt=pointtype, capsize=5)
+            self.ax.errorbar(x, y, erry, errx, fmt=pointtype, capsize=5)
         else:
             print("invalid type")
 
     def fit(self, x, y):
         x = np.array(x)
-        x = np.insert(x, 0, 0)
-        x = np.append(x[(len(x)-1)] + x[1], x)
-
         y = np.array(y)
-        y = np.insert(y, 0, 0)
-        y = np.append(y[(len(y)-1)] + y[1], y)
 
         a, b = np.polyfit(x, y, 1)
 
@@ -128,3 +131,14 @@ class Grafico:
         self.ax.set_xlabel(name)
     def set_ylabel(self, name):
         self.ax.set_ylabel(name)
+
+def getFitArrayWithStartAndEnd(x, y) -> list:
+    arrayx = list(x)
+    arrayx.insert(0, 0)
+    arrayx.append(arrayx[len(arrayx)-1] + arrayx[1])
+
+    arrayy = list(y)
+    arrayy.insert(0, 0)
+    arrayy.append(arrayy[len(arrayy)-1] + arrayy[1])
+
+    return (arrayx, arrayy)
